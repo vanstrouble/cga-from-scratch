@@ -19,6 +19,7 @@ def fill_random_array(p):
     return a
 
 
+# Testing user defined arrays | Select one proof
 p = np.random.rand(4)
 # p = np.array([1, 1, 1, 1])
 # p = np.array([0.1, 0.3, 0.6, 0.9])
