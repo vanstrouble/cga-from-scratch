@@ -12,7 +12,6 @@ class CGA:
         self.best = 0
         self.iter_num = count()
 
-    @jit
     def fitness_func(self, chromosome: np.ndarray[np.int32]) -> np.int32:
         # return sum(bit for bit in chromosome)
         return np.sum(chromosome)
@@ -20,7 +19,9 @@ class CGA:
     def run(self):
         x_vals = []
         y_vals = []
-        while (np.sum(self.probabilities)) != self.chrome_size or (np.sum(self.probabilities)) == 0:
+
+        sum_probabilities = np.sum(self.probabilities)
+        while sum_probabilities != self.chrome_size and sum_probabilities != 0:
             for i in range(self.chrome_size):
                 if self.probabilities[i] > 0 and self.probabilities[i] < 1:
 
@@ -50,7 +51,7 @@ class CGA:
                 x_vals.append(next(self.iter_num))
                 y_vals.append(np.round(self.fitness_func(self.probabilities), 2))
 
-                # print(f'P{self.probabilities}, it: {self.iter_num},  suma = {np.sum(self.probabilities)}, obj: {self.chrome_size}')
+            sum_probabilities = np.sum(self.probabilities)
 
         # Graph the history
         plt.plot(x_vals, y_vals)
