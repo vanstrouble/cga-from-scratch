@@ -1,7 +1,34 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from itertools import count
-from numba import jit
+from multiprocessing import Pool, cpu_count
+
+
+def fitness_func(chromosome):
+    return np.sum(chromosome)
+
+
+def compete_and_update(probabilities, pop_size):
+    a = (np.random.random(size=len(probabilities)) < probabilities).astype(int)
+    b = (np.random.random(size=len(probabilities)) < probabilities).astype(int)
+
+    # Compete 2 individuals
+    winner, loser = (
+        (a, b)
+        if fitness_func(a) > fitness_func(b)
+        else (b, a)
+    )
+
+    # Update probability vector
+    new_probabilities = probabilities.copy()
+    for j in range(len(probabilities)):
+        if winner[j] != loser[j]:
+            if winner[j] == 1:
+                new_probabilities[j] += 1 / pop_size
+            else:
+                new_probabilities[j] -= 1 / pop_size
+
+    return np.around(new_probabilities, 2)
 
 
 class CGA:
@@ -12,46 +39,29 @@ class CGA:
         self.best = 0
         self.iter_num = count()
 
-    def fitness_func(self, chromosome: np.ndarray[np.int32]) -> np.int32:
-        # return sum(bit for bit in chromosome)
-        return np.sum(chromosome)
-
-    def run(self):
+    def run(self, num_cores=cpu_count()):
         x_vals = []
         y_vals = []
 
         sum_probabilities = np.sum(self.probabilities)
+        pool = Pool(num_cores)
+
         while sum_probabilities != self.chrome_size and sum_probabilities != 0:
             for i in range(self.chrome_size):
                 if self.probabilities[i] > 0 and self.probabilities[i] < 1:
-
-                    # Generate individuals
-                    a = (np.random.random(size=len(self.probabilities)) < self.probabilities).astype(int)
-                    b = (np.random.random(size=len(self.probabilities)) < self.probabilities).astype(int)
-
-                    # Compete 2 individuals
-                    winner, loser = (
-                        (a, b)
-                        if self.fitness_func(a) > self.fitness_func(b)
-                        else (b, a)
-                    )
-
-                    # Update probability vector
-                    for j in range(self.chrome_size):
-                        if winner[j] != loser[j]:
-                            if winner[j] == 1:
-                                self.probabilities[j] += 1 / self.pop_size
-                            else:
-                                self.probabilities[j] -= 1 / self.pop_size
-                    self.probabilities = np.around(self.probabilities, 2)
+                    new_probs = pool.apply(compete_and_update, (self.probabilities, self.pop_size))
+                    self.probabilities = new_probs
                 else:
                     self.probabilities[i] = 1.0
 
                 # Graph history
                 x_vals.append(next(self.iter_num))
-                y_vals.append(np.round(self.fitness_func(self.probabilities), 2))
+                y_vals.append(np.round(fitness_func(self.probabilities), 2))
 
             sum_probabilities = np.sum(self.probabilities)
+
+        pool.close()
+        pool.join()
 
         # Graph the history
         plt.plot(x_vals, y_vals)
