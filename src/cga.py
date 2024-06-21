@@ -1,16 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from itertools import count
-# from numba import jit
 from multiprocessing import Pool, cpu_count
 
 
-# @jit(nopython=True)
 def fitness_func(chromosome):
     return np.sum(chromosome)
 
 
-# @jit(nopython=True)
 def compete_and_update(probabilities, pop_size):
     a = (np.random.random(size=len(probabilities)) < probabilities).astype(np.int32)
     b = (np.random.random(size=len(probabilities)) < probabilities).astype(np.int32)
