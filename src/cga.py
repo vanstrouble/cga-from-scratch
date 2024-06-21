@@ -1,16 +1,19 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from itertools import count
+# from numba import jit
 from multiprocessing import Pool, cpu_count
 
 
+# @jit(nopython=True)
 def fitness_func(chromosome):
     return np.sum(chromosome)
 
 
+# @jit(nopython=True)
 def compete_and_update(probabilities, pop_size):
-    a = (np.random.random(size=len(probabilities)) < probabilities).astype(int)
-    b = (np.random.random(size=len(probabilities)) < probabilities).astype(int)
+    a = (np.random.random(size=len(probabilities)) < probabilities).astype(np.int32)
+    b = (np.random.random(size=len(probabilities)) < probabilities).astype(np.int32)
 
     # Compete 2 individuals
     winner, loser = (
@@ -35,7 +38,7 @@ class CGA:
     def __init__(self, pop_size=50, chrome_size=4) -> None:
         self.pop_size = pop_size
         self.chrome_size = chrome_size
-        self.probabilities = np.full(chrome_size, 0.5, np.float16)
+        self.probabilities = np.full(chrome_size, 0.5, np.float32)
         self.best = 0
         self.iter_num = count()
 
