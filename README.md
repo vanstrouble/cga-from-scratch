@@ -6,16 +6,13 @@ In the CGA, instead of representing every possible value in a chromosome, probab
 
 The basic operation of the CGA involves the following steps:
 
-<div style="float: left; margin-right: 10px;">
-  <img src="img/pseudocode.jpg" alt="Pseudocode" width=400>
-</div>
+<img src="img/pseudocode.jpg" alt="Pseudocode" width=400>
 
 1. **Initialization**: An initial population of chromosomes with random probability tables is created.
 2. **Evaluation**: The fitness of each chromosome is evaluated based on the quality of the solution it represents.
 3. **Selection**: The fittest chromosomes are selected for reproduction and to form the next generation.
 4. **Update of Probability Tables**: The probability tables of the genes are updated based on the performance of the selected chromosomes.
 5. **Convergence**: The evaluation, selection, and probability table update steps are repeated until a convergence criterion is met, such as a maximum number of generations or a desired solution quality.
-
 
 The CGA offers advantages in terms of memory usage and runtime efficiency, as the reduced chromosome size and compact representation enable more efficient exploration of the search space.
 
