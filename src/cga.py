@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from itertools import count
 from multiprocessing import Pool, cpu_count
 
@@ -40,8 +40,8 @@ class CGA:
         self.iter_num = count()
 
     def run(self, num_cores=cpu_count()):
-        x_vals = []
-        y_vals = []
+        # x_vals = []
+        # y_vals = []
 
         sum_probabilities = np.sum(self.probabilities)
         pool = Pool(num_cores)
@@ -54,22 +54,22 @@ class CGA:
                 else:
                     self.probabilities[i] = 1.0
 
-                # Graph history
-                x_vals.append(next(self.iter_num))
-                y_vals.append(np.round(fitness_func(self.probabilities), 2))
+                # # Graph history
+                # x_vals.append(next(self.iter_num))
+                # y_vals.append(np.round(fitness_func(self.probabilities), 2))
 
             sum_probabilities = np.sum(self.probabilities)
 
         pool.close()
         pool.join()
 
-        # Graph the history
-        plt.plot(x_vals, y_vals)
-        plt.title("Evolución hasta converger")
-        plt.xlabel("Épocas")
-        plt.ylabel("Aptitud")
-        plt.show()
-        print(f"Épocas: {self.iter_num}")
+        # # Graph the history
+        # plt.plot(x_vals, y_vals)
+        # plt.title("Evolución hasta converger")
+        # plt.xlabel("Épocas")
+        # plt.ylabel("Aptitud")
+        # plt.show()
+        # print(f"Épocas: {self.iter_num}")
 
         return self.probabilities
 
