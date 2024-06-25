@@ -1,4 +1,5 @@
 import numpy as np
+import seaborn as sns
 import matplotlib.pyplot as plt
 
 from itertools import count
@@ -35,12 +36,19 @@ def compete_and_update(probabilities, pop_size):
 
 def plot_history(history, counter):
     x_vals, y_vals = zip(*history)
-    plt.plot(x_vals, y_vals, marker='o', linestyle='-', color='b', label='Aptitud')
-    plt.title("Evolución hasta converger")
-    plt.xlabel("Épocas")
-    plt.ylabel("Aptitud")
-    plt.grid(True)
-    plt.legend(f"Iterations: {counter}")
+
+    sns.set_context("notebook", rc={"lines.linewidth": 2.5})
+    sns.set_style("dark")
+    palette = sns.color_palette("rocket")
+    color = palette[2]
+
+    sns.lineplot(x=x_vals, y=y_vals, linestyle='-', label='Fitness', color=color)
+
+    plt.title("Evolution until convergerce")
+    plt.xlabel("Epochs")
+    plt.ylabel("Fitness")
+
+    plt.legend(title=f"Iterations: {next(counter)}" if hasattr(counter, '__next__') else f"Iterations: {counter}")
     plt.show()
 
 
@@ -48,7 +56,7 @@ class CGA:
     def __init__(self, pop_size=50, chrome_size=4) -> None:
         self.pop_size = pop_size
         self.chrome_size = chrome_size
-        self.probabilities = np.full(chrome_size, 0.5, np.float32)
+        self.probabilities = np.full(chrome_size, 0.5, np.float64)
         self.best = 0
         self.iter_num = count()
 
@@ -74,23 +82,37 @@ class CGA:
                     if plotting is True:
                         history.append((next(self.iter_num), np.round(fitness_func(self.probabilities), 2)))
 
+                    next(self.iter_num)
+
                 sum_probabilities = np.sum(self.probabilities)
 
         if plotting is True:
             plot_history(history, self.iter_num)
 
-        return self.probabilities
+        return self.probabilities, self.iter_num
 
 
 if __name__ == "__main__":
-    cga = CGA(50, 4)
-    best_solution = cga.run()
-    print(f"Solución: {best_solution}")
+    # Random population and chromosome size
+    population = np.random.randint(1, 100)
+    chromosome_size = np.random.randint(2, 10)
 
-    # values = 10
-    # for i in range(1, values+1):
-    #     print(f"i: {i}")
-    #     cga = CGA(50, 4)
-    #     best_solution = cga.run(plotting=True)
-    #     print(f"Solution: {best_solution}")
-    #     print("-------------------------------------------------")
+    cga = CGA(population, chromosome_size)
+    best_solution, it = cga.run()
+    print(f"\nPopulation: {population}, Chromosome Size: {chromosome_size}")
+    print(f"Solution: {best_solution}, Iterations: {it}")
+
+    # Board example population and chromosome size
+    # cga = CGA(50, 4)
+    # best_solution, _ = cga.run()
+    # print(f"Solution: {best_solution}")
+
+    # Range population and chromosome size
+    # population = 100
+    # chromosome_size = 15
+
+    # for i in range(1, population+1):
+    #     print(f"\nPopulation: {i}")
+    #     cga = CGA(population, chromosome_size)
+    #     best_solution, it = cga.run(plotting=False)
+    #     print(f"Solution: {best_solution}, Iterations: {it}")
